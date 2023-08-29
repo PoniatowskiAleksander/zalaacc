@@ -41,10 +41,10 @@ with open(r'C:/overallData/womenSurnames.csv', 'r', encoding='utf-8') as f:
     womenSurnames = f.read()
 
 
-men = men.split(',')
-women = women.split(',')
-menSurnames = menSurnames.split(',')
-womenSurnames = womenSurnames.split(',')
+men = men.split(',')[0:500]
+women = women.split(',')[0:500]
+menSurnames = menSurnames.split(',')[0:500]
+womenSurnames = womenSurnames.split(',')[0:500]
 
 def randomize(list1, list2):
     return list1[randint(0, len(list1)-2)], list2[randint(0, len(list2)-2)]
@@ -53,6 +53,9 @@ def randomize(list1, list2):
 #sleep(2)
 def main():
     counter = 0
+    with open('xxx.txt', 'r', encoding='utf-8') as f:
+        mailCounter = int(f.read())
+    
 
 
 
@@ -121,8 +124,34 @@ def main():
     sleep(5)
     driver.find_element(By.XPATH, '/html/body/div[1]/div/section/div/div[2]/div/div/div/form/div[7]/button').click() #register
     
-    sleep(3)
+    
 
+    if mailCounter == 10:
+        startOfConfirming = time.time()
+        print('CONFIRMING NOW!!!!')
+        confirmingCounterTemp = 0
+        sleep(3)
+        with open('xxx.txt', 'w') as f:
+            f.write('0')
+            mailCounter = 0
+        
+        with MailBox('serwer2340135.home.pl').login('serwer2340135', PASSWORD) as mailbox:
+            links = []
+            for msg in mailbox.fetch(AND(seen=False, subject='adres e-mail.')):
+                link = msg.html.split('zalando-newsletter/')[1].split('" target="_blank')[0]
+                link = 'https://www.zalando.pl/zalando-newsletter/' + link
+                links.append(link)
+
+            for i in links:
+                driver.switch_to.new_window('tab')
+                driver.get(i)
+                print(confirmingCounterTemp + 1)
+                confirmingCounterTemp += 1
+
+        sleep(3)
+        print(f'confirming time: {time.time() - startOfConfirming}')
+
+    '''
     with MailBox('serwer2340135.home.pl').login('serwer2340135', PASSWORD) as mailbox:
         STARTING = time.time()
         def checkForMsg():
@@ -151,10 +180,15 @@ def main():
 
         checkForMsg()
 
-
+    '''
     with open('emails.csv', 'a') as f:
         f.write(f'\n{firstname},{lastname},{email},{password}')
-    sleep(8)
+    
+
+    mailCounter += 1
+    with open('xxx.txt', 'w') as f:
+        f.write(str(mailCounter))
+    sleep(5)
     driver.quit()
     ipchanger.changeIp()
     print('donnmeeeee')
