@@ -2,6 +2,8 @@ from time import sleep
 from requests import get
 from ppadb.client import Client as AdbClient
 
+
+
 def connect():
     client = AdbClient(host="127.0.0.1", port=5037) # Default is "127.0.0.1" and 5037
 
@@ -29,6 +31,10 @@ def changeIp():
 
 
 
+device, client = connect()
 
+device.shell('svc usb setFunctions rndis')
+
+print('awfawf')
 # adb start-server
 # scrcpy

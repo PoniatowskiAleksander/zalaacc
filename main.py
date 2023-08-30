@@ -13,6 +13,7 @@ import ipchanger
 import time
 from seleniumbase import Driver
 import undetected_chromedriver as uc
+import threading
 
 #driver.get('www.nowsecure.nl')
 
@@ -121,8 +122,9 @@ def main():
     driver.find_element(By.XPATH, '/html/body/div[1]/div/section/div/div[2]/div/div/div/form/div[4]/div/div[1]/input').send_keys(password) # password
     driver.find_element(By.XPATH, '//*[@id="section-register"]/div/form/div[6]/div').click() #newsletter
 
-    sleep(5)
-    driver.find_element(By.XPATH, '/html/body/div[1]/div/section/div/div[2]/div/div/div/form/div[7]/button').click() #register
+    sleep(1)
+    driver.execute_script('document.querySelector("#section-register > div > form > div.wTFXcM > button").click()')
+    #driver.find_element(By.XPATH, '/html/body/div[1]/div/section/div/div[2]/div/div/div/form/div[7]/button').click() #register
     
     
 
@@ -136,7 +138,9 @@ def main():
             mailCounter = 0
         
         with MailBox('serwer2340135.home.pl').login('serwer2340135', PASSWORD) as mailbox:
+            
             links = []
+            mails = []
             for msg in mailbox.fetch(AND(seen=False, subject='adres e-mail.')):
                 link = msg.html.split('zalando-newsletter/')[1].split('" target="_blank')[0]
                 link = 'https://www.zalando.pl/zalando-newsletter/' + link
